@@ -5,9 +5,9 @@ import java.io.FileNotFoundException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import model.CacheToEndpoint;
 import model.Data;
-import model.VideoRequest;
+import model.LatenceToCacheServer;
+import model.Request;
 
 public class ReadData {
 
@@ -26,9 +26,9 @@ public class ReadData {
 				int nbEndpoint = scanner.nextInt(); // on lit le nombre d'endpoints
 				int nbRequest = scanner.nextInt(); // on lit le nombre de request descriptions
 				int nbCaches = scanner.nextInt(); // on lit le nombre de caches serveur
-				int sizeEndpoint = scanner.nextInt(); // on lit la taille des caches serveurs
+				int sizeCacheServer = scanner.nextInt(); // on lit la taille des caches serveurs
 				
-				data = new Data(nbVideo, nbEndpoint, nbRequest, nbCaches, sizeEndpoint);
+				data = new Data(nbVideo, nbEndpoint, nbRequest, nbCaches, sizeCacheServer);
 
 				System.out.println(data.getNbVideo() + " " + data.getNbEndpoint() + " " + data.getNbRequest() + " " + data.getNbCaches() + " " + data.getSizeEndpoint()); // TODO A supprimer avant de rendre
 
@@ -38,6 +38,11 @@ public class ReadData {
 					System.out.print(data.getSizeVideo(i) + " "); // TODO A supprimer avant de rendre
 				}
 				
+				for (int i = 0; i < data.getNbCaches(); i++) {
+					data.getCache(i).setNumero(i);
+					data.getCache(i).setSize(sizeCacheServer);
+				}
+				
 				//Lecture de la latency entre chaque endpoint et le data center et les caches serveurs.
 				for (int i = 0; i < data.getNbEndpoint(); i++) {
 					data.getEndpoint(i).setNumero(i);
@@ -45,20 +50,20 @@ public class ReadData {
 					data.getEndpoint(i).setNbCacheConnected(scanner.nextInt()); // Nombre de caches connecté à l'endpoint i
 					System.out.println(data.getEndpoint(i).getDataCenterLatency() + " " + data.getEndpoint(i).getNbCacheConnected()); //TODO A supprimer avant de rendre
 					for (int j = 0 ; j < data.getEndpoint(i).getNbCacheConnected(); j++) {
-						data.getEndpoint(i).addCache(j, new CacheToEndpoint(scanner.nextInt(), scanner.nextInt()));
-						System.out.println(data.getEndpoint(i).getCache(j).getNumero() + " " + data.getEndpoint(i).getCache(j).getLatency()); // TODO A supprimer avant de rendre
+						data.getEndpoint(i).addLatenceToCacheServer(new LatenceToCacheServer(scanner.nextInt(), scanner.nextInt()));
+						System.out.println(data.getEndpoint(i).getLatenceToCacheServer(j).getNumeroCacheServer() + " " + data.getEndpoint(i).getLatenceToCacheServer(j).getLatency()); // TODO A supprimer avant de rendre
 					}
 				}
 				
 				// Lecture des request descriptions
 				for(int i = 0; i < data.getNbRequest(); i ++) {
-					int numeroVideo = scanner.nextInt();
-					int numeroEndpoint = scanner.nextInt();
-					int nbVideoRequest = data.getEndpoint(numeroEndpoint).getVideo().size();
-					data.getEndpoint(numeroEndpoint).addVideo(nbVideoRequest, new VideoRequest(numeroVideo, scanner.nextInt()));
-					System.out.println(data.getEndpoint(numeroEndpoint).getVideo(nbVideoRequest).getNumero() + " " +
-							data.getEndpoint(numeroEndpoint).getNumero() + " " + 
-							data.getEndpoint(numeroEndpoint).getVideo(nbVideoRequest).getRequests()); //TODO A supprimer avant de rendre
+					int video = scanner.nextInt();
+					int endpoint = scanner.nextInt();
+					data.setRequest(i, new Request(video, endpoint, scanner.nextInt()));
+					data.getEndpoint(endpoint).addVideos(video);
+					System.out.println(data.getRequest(i).getVideo() + " " +
+							data.getRequest(i).getEndpoint() + " " + 
+							data.getRequest(i).getRequests()); //TODO A supprimer avant de rendre
 				}
 				
 

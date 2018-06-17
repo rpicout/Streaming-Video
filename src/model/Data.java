@@ -1,31 +1,45 @@
 package model;
 
-import java.util.ArrayList;
-
 public class Data {
 
 	private int nbVideo;
 	private int nbEndpoint;
 	private int nbRequest;
 	private int nbCaches;
-	private int sizeEndpoint;
+	private int sizeCacheServer;
 	private int[] sizeVideo;
-	private EndpointInfo[] endpoint;
+	private Endpoint[] endpoint;
+	private Cache[] cache;
+	private Request[] request;
 	
-	
+	/*
+	 * Constructeur
+	 */
 	public Data(int nbVideo, int nbEndpoint, int nbRequest, int nbCaches, int sizeEndpoint) {
 		this.nbVideo = nbVideo;
 		this.nbEndpoint = nbEndpoint;
 		this.nbRequest = nbRequest;
 		this.nbCaches = nbCaches;
-		this.sizeEndpoint = sizeEndpoint;
+		this.sizeCacheServer = sizeEndpoint;
 		sizeVideo = new int[nbVideo];
-		endpoint = new EndpointInfo[nbEndpoint];
+		
+		endpoint = new Endpoint[nbEndpoint];
 		for (int i = 0; i < nbEndpoint; i++)
-			endpoint[i] = new EndpointInfo();
+			endpoint[i] = new Endpoint();
+		
+		cache = new Cache[nbCaches];
+		for (int i = 0; i < nbCaches; i++)
+			cache[i] = new Cache();
+		
+		request = new Request[nbRequest];
+		for (int i = 0; i < nbRequest; i++)
+			request[i] = new Request();
 	}
 
 
+	/*
+	 * Getters / Setters
+	 */
 	public int getNbVideo() {
 		return nbVideo;
 	}
@@ -63,11 +77,11 @@ public class Data {
 
 
 	public int getSizeEndpoint() {
-		return sizeEndpoint;
+		return sizeCacheServer;
 	}
 
 	public void setSizeEndpoint(int sizeEndpoint) {
-		this.sizeEndpoint = sizeEndpoint;
+		this.sizeCacheServer = sizeEndpoint;
 	}
 
 
@@ -88,20 +102,79 @@ public class Data {
 	}
 
 
-	public EndpointInfo[] getEndpoint() {
+	public Endpoint[] getEndpoint() {
 		return endpoint;
 	}
 	
-	public EndpointInfo getEndpoint(int i) {
+	public Endpoint getEndpoint(int i) {
 		return endpoint[i];
 	}
 
-	public void setEndpoint(EndpointInfo[] endpoint) {
+	public void setEndpoint(Endpoint[] endpoint) {
 		this.endpoint = endpoint;
 	}
 	
-	public void setEndpoint(int i, EndpointInfo endpoint) {
+	public void setEndpoint(int i, Endpoint endpoint) {
 		this.endpoint[i] = endpoint;
 	}
+	
+	
+	public int getSizeCacheServer() {
+		return sizeCacheServer;
+	}
 
+	public void setSizeCacheServer(int sizeCacheServer) {
+		this.sizeCacheServer = sizeCacheServer;
+	}
+
+
+	public Cache[] getCache() {
+		return cache;
+	}
+	
+	public Cache getCache(int i) {
+		return cache[i];
+	}
+
+	public void setCache(Cache[] cache) {
+		this.cache = cache;
+	}
+	
+	public void setCache(int i, Cache cache) {
+		this.cache[i] = cache;
+	}
+
+
+	public Request[] getRequest() {
+		return request;
+	}
+	
+	public Request getRequest(int i) {
+		return request[i];
+	}
+
+	public void setRequest(Request[] request) {
+		this.request = request;
+	}
+	
+	public void setRequest(int i, Request request) {
+		this.request[i] = request;
+	}
+	
+	public int getNbCachesUsed() {
+		int nbCachesUsed = 0;
+		for (int i = 0; i < nbCaches; i++) {
+			if (getCache(i).getVideo().size() != 0)
+				nbCachesUsed ++;
+		}
+		return nbCachesUsed;
+	}
+
+	public int getLatenceTotal() {
+		int latenceTotal = 0;
+		
+		//TODO
+		
+		return latenceTotal;
+	}
 }
