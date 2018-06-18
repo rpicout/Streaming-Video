@@ -2,6 +2,7 @@ package streamingVideo;
 
 
 import heuristique.Gloutonne;
+import heuristique.SacADos;
 import model.Data;
 import streamingVideo.ReadData;
 
@@ -20,8 +21,15 @@ public class Main {
 		Gloutonne gloutonne = new Gloutonne();
 		data = gloutonne.getSolution(data);
 		
-		WriteData w = new WriteData();
-		w.write(data);
+		WriteResult wr = new WriteResult();
+		WriteScore ws = new WriteScore();
+		wr.writeGloutonne(data);
+		ws.writeGloutonne(data);
+		
+		SacADos sacADos = new SacADos();
+		data = sacADos.getSolution(data);
+		
+		wr.writeSacADos(data);
 		
 		System.out.println("Nombre de vidéo : "+ data.getNbVideo()); //TODO A supprimer avant de rendre 
 	}

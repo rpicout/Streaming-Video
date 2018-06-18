@@ -170,11 +170,32 @@ public class Data {
 		return nbCachesUsed;
 	}
 
-	public int getLatenceTotal() {
-		int latenceTotal = 0;
+	public int getTimeSaved() {
+		int timeSaved = 0;
 		
-		//TODO
-		
-		return latenceTotal;
+		for (int i = 0; i < nbRequest; i++) {
+			int endpoint = getRequest(i).getEndpoint();
+			int video = getRequest(i).getVideo();
+			int request = getRequest(i).getRequests();
+			for (int j = 0; j < getEndpoint(endpoint).getNbCacheConnected(); j++) {
+				int cache = getEndpoint(endpoint).getLatenceToCacheServer(j).getCache() ;
+				for (int k = 0; k < getCache(cache).getVideo().size(); k++){
+					if (k == video) {
+						timeSaved += request * Math.abs(getEndpoint(endpoint).getDataCenterLatency() 
+								- getEndpoint(endpoint).findLatence(cache).getLatency());
+					}
+				}
+			}
+		}
+		return timeSaved;
+	}
+
+	public int getScore() {
+		int timeSaved = getTimeSaved();
+		int totalRequests = 0;
+		for (int i = 0; i < nbRequest; i++)
+			totalRequests += request[i].getRequests();
+		int score = (timeSaved / totalRequests) * 1000;
+		return score;
 	}
 }

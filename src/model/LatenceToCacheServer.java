@@ -2,14 +2,14 @@ package model;
 
 public class LatenceToCacheServer {
 	
-	private int numeroCacheServer;
+	private int cache;
 	private int latency;
 	
 	/*
 	 * Constructeur
 	 */
 	public LatenceToCacheServer(int numeroCacheServer, int latency) {
-		this.numeroCacheServer = numeroCacheServer;
+		this.cache = numeroCacheServer;
 		this.latency = latency;
 	}
 
@@ -17,12 +17,12 @@ public class LatenceToCacheServer {
 	/*
 	 * Getters / Setters
 	 */
-	public int getNumeroCacheServer() {
-		return numeroCacheServer;
+	public int getCache() {
+		return cache;
 	}
 
-	public void setNumeroCacheServer(int numeroCacheServer) {
-		this.numeroCacheServer = numeroCacheServer;
+	public void setCache(int cache) {
+		this.cache = cache;
 	}
 
 

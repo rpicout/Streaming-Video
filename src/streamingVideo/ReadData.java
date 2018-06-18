@@ -51,7 +51,7 @@ public class ReadData {
 					System.out.println(data.getEndpoint(i).getDataCenterLatency() + " " + data.getEndpoint(i).getNbCacheConnected()); //TODO A supprimer avant de rendre
 					for (int j = 0 ; j < data.getEndpoint(i).getNbCacheConnected(); j++) {
 						data.getEndpoint(i).addLatenceToCacheServer(new LatenceToCacheServer(scanner.nextInt(), scanner.nextInt()));
-						System.out.println(data.getEndpoint(i).getLatenceToCacheServer(j).getNumeroCacheServer() + " " + data.getEndpoint(i).getLatenceToCacheServer(j).getLatency()); // TODO A supprimer avant de rendre
+						System.out.println(data.getEndpoint(i).getLatenceToCacheServer(j).getCache() + " " + data.getEndpoint(i).getLatenceToCacheServer(j).getLatency()); // TODO A supprimer avant de rendre
 					}
 				}
 				

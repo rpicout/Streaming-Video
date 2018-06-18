@@ -6,11 +6,22 @@ import java.io.IOException;
 
 import model.Data;
 
-public class WriteData {
+
+public class WriteResult {
+	
+	File file;
+	
+	public void writeGloutonne (Data data) {
+		file = new File("OutputData/gloutonneSolution.result.txt");
+		write(data);
+	}
+	
+	public void writeSacADos (Data data){
+		file = new File("OutputData/sacADosSolution.result.txt");
+		write(data);
+	}
 	
 	public void write (Data data) {
-		
-		File file = new File("OutputData/gloutonneSolution.txt");
 		try {
 			FileWriter fw = new FileWriter(file);
 			fw.write(data.getNbCachesUsed() + "\n");
@@ -25,6 +36,5 @@ public class WriteData {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	    
 	}
 }

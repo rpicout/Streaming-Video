@@ -88,4 +88,12 @@ public class Endpoint {
 		this.videos.add(videos);
 	}
 
+	
+	public LatenceToCacheServer findLatence(int cache){
+		for (int i = 0; i < latenceToCacheServer.size(); i++){
+			if (latenceToCacheServer.get(i).getCache() == cache)
+				return latenceToCacheServer.get(i);
+		}
+		return null;
+	}
 }
