@@ -25,6 +25,7 @@ public class Gloutonne {
 								data.getCache(cacheServer).addVideo(i);
 								int newCharge = data.getCache(cacheServer).getCurrentCharge() + data.getSizeVideo(i);
 								data.getCache(cacheServer).setCurrentCharge(newCharge);
+								data.getCacheConnected(i).addCache(cacheServer);
 								isAdd = true;
 							}
 							k++;

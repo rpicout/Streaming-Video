@@ -89,11 +89,11 @@ public class Endpoint {
 	}
 
 	
-	public LatenceToCacheServer findLatence(int cache){
+	public int findLatence(int cache){
 		for (int i = 0; i < latenceToCacheServer.size(); i++){
 			if (latenceToCacheServer.get(i).getCache() == cache)
-				return latenceToCacheServer.get(i);
+				return latenceToCacheServer.get(i).getLatency();
 		}
-		return null;
+		return 0;
 	}
 }

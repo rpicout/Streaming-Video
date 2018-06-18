@@ -101,6 +101,7 @@ public class SacADos {
 				if (data.getSizeVideo(video) + currentCharge < data.getSizeCacheServer()){
 					data.getCache(numCache).addVideo(video);
 					data.getCache(numCache).setCurrentCharge(data.getSizeVideo(video) + currentCharge);
+					data.getCacheConnected(video).addCache(numCache);
 					isInsert = true;
 				}
 			}

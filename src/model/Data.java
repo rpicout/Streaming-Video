@@ -11,6 +11,7 @@ public class Data {
 	private Endpoint[] endpoint;
 	private Cache[] cache;
 	private Request[] request;
+	private CacheConnected[] cacheConnected;
 	
 	/*
 	 * Constructeur
@@ -34,6 +35,10 @@ public class Data {
 		request = new Request[nbRequest];
 		for (int i = 0; i < nbRequest; i++)
 			request[i] = new Request();
+		
+		cacheConnected = new CacheConnected[nbVideo];
+		for (int i = 0; i < nbVideo; i++)
+			cacheConnected[i] = new CacheConnected();
 	}
 
 
@@ -169,6 +174,24 @@ public class Data {
 		}
 		return nbCachesUsed;
 	}
+	
+
+	public CacheConnected[] getCacheConnected() {
+		return cacheConnected;
+	}
+
+	public CacheConnected getCacheConnected(int i) {
+		return cacheConnected[i];
+	}
+
+	public void setCacheConnected(CacheConnected[] cacheConnected) {
+		this.cacheConnected = cacheConnected;
+	}
+	
+	public void setCacheConnected(int i, CacheConnected cacheConnected) {
+		this.cacheConnected[i] = cacheConnected;
+	}
+
 
 	public int getTimeSaved() {
 		int timeSaved = 0;
@@ -177,12 +200,14 @@ public class Data {
 			int endpoint = getRequest(i).getEndpoint();
 			int video = getRequest(i).getVideo();
 			int request = getRequest(i).getRequests();
-			for (int j = 0; j < getEndpoint(endpoint).getNbCacheConnected(); j++) {
-				int cache = getEndpoint(endpoint).getLatenceToCacheServer(j).getCache() ;
-				for (int k = 0; k < getCache(cache).getVideo().size(); k++){
-					if (k == video) {
-						timeSaved += request * Math.abs(getEndpoint(endpoint).getDataCenterLatency() 
-								- getEndpoint(endpoint).findLatence(cache).getLatency());
+			for (int j = 0; j < cacheConnected[video].getCache().size(); j++) {
+				int cache = cacheConnected[video].getCache(j);
+				for (int k = 0; k < getEndpoint(endpoint).getNbCacheConnected(); k++) {
+					if (getEndpoint(endpoint).getLatenceToCacheServer(k).getCache() == cache) {
+						if (getEndpoint(endpoint).findLatence(k) < getEndpoint(endpoint).getDataCenterLatency()) {
+							timeSaved += request * (getEndpoint(endpoint).getDataCenterLatency() 
+									- getEndpoint(endpoint).findLatence(cache));
+						}
 					}
 				}
 			}

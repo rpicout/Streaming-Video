@@ -28,8 +28,9 @@ public class Main {
 		
 		SacADos sacADos = new SacADos();
 		data = sacADos.getSolution(data);
-		
 		wr.writeSacADos(data);
+		ws.writeSacADos(data);
+		
 		
 		System.out.println("Nombre de vidéo : "+ data.getNbVideo()); //TODO A supprimer avant de rendre 
 	}
