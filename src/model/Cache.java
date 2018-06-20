@@ -65,5 +65,8 @@ public class Cache {
 	public void addVideo(int video) {
 		this.video.add(video);
 	}
+	public void removeVideo(int video) {
+		this.video.remove(video);
+	}
 	
 }
