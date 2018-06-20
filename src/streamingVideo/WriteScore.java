@@ -10,19 +10,20 @@ public class WriteScore {
 	
 	File file;
 	
-	public void writeGloutonne (Data data) {
+	public void writeGloutonne (Data data, String name) {
 		file = new File("OutputData/gloutonneSolution.score.txt");
-		write(data);
+		write(data, name);
 	}
 	
-	public void writeSacADos (Data data){
+	public void writeSacADos (Data data, String name){
 		file = new File("OutputData/sacADosSolution.score.txt");
-		write(data);
+		write(data, name);
 	}
 	
-	public void write (Data data) {
+	public void write (Data data, String name) {
 		try {
 			FileWriter fw = new FileWriter(file);
+			fw.write("Vidéo testée : " + name);
 			fw.write("Score : " + data.getScore());
 			fw.close();
 		} catch (IOException e) {

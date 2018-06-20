@@ -193,21 +193,45 @@ public class Data {
 	}
 
 
-	public int getTimeSaved() {
-		int timeSaved = 0;
+	public long getTimeSaved() {
+		long timeSaved = 0;
 		
 		for (int i = 0; i < nbRequest; i++) {
+			if (i == 4927) {
 			int endpoint = getRequest(i).getEndpoint();
 			int video = getRequest(i).getVideo();
 			int request = getRequest(i).getRequests();
 			for (int j = 0; j < cacheConnected[video].getCache().size(); j++) {
 				int cache = cacheConnected[video].getCache(j);
-				for (int k = 0; k < getEndpoint(endpoint).getNbCacheConnected(); k++) {
+				boolean isChanged = false;
+				int k = 0;
+				while (!isChanged && k < getEndpoint(endpoint).getNbCacheConnected()){
 					if (getEndpoint(endpoint).getLatenceToCacheServer(k).getCache() == cache) {
-						if (getEndpoint(endpoint).findLatence(k) < getEndpoint(endpoint).getDataCenterLatency()) {
-							timeSaved += request * (getEndpoint(endpoint).getDataCenterLatency() 
-									- getEndpoint(endpoint).findLatence(cache));
+						if (getEndpoint(endpoint).findLatence(cache) < getEndpoint(endpoint).getDataCenterLatency()) {
+							timeSaved += request * (getEndpoint(endpoint).getDataCenterLatency() - getEndpoint(endpoint).findLatence(cache));
+							isChanged = true;
 						}
+					}
+					k++;
+				}
+			}
+			}else {
+				int endpoint = getRequest(i).getEndpoint();
+				int video = getRequest(i).getVideo();
+				int request = getRequest(i).getRequests();
+				for (int j = 0; j < cacheConnected[video].getCache().size(); j++) {
+					int cache = cacheConnected[video].getCache(j);
+					boolean isChanged = false;
+					int k = 0;
+					while (!isChanged && k < getEndpoint(endpoint).getNbCacheConnected()){
+						if (getEndpoint(endpoint).getLatenceToCacheServer(k).getCache() == cache) {
+							if (getEndpoint(endpoint).findLatence(cache) < getEndpoint(endpoint).getDataCenterLatency()) {
+								timeSaved += request * (getEndpoint(endpoint).getDataCenterLatency() 
+										- getEndpoint(endpoint).findLatence(cache));
+								isChanged = true;
+							}
+						}
+						k++;
 					}
 				}
 			}
@@ -215,12 +239,12 @@ public class Data {
 		return timeSaved;
 	}
 
-	public int getScore() {
-		int timeSaved = getTimeSaved();
-		int totalRequests = 0;
+	public long getScore() {
+		long timeSaved = getTimeSaved();
+		long totalRequests = 0;
 		for (int i = 0; i < nbRequest; i++)
 			totalRequests += request[i].getRequests();
-		int score = (timeSaved / totalRequests) * 1000;
+		long score = (timeSaved / totalRequests) * 1000;
 		return score;
 	}
 }
