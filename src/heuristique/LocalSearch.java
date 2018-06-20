@@ -31,7 +31,6 @@ public class LocalSearch {
 		
 		ArrayList<Integer> videoTested = new ArrayList<Integer>();
 
-<<<<<<< HEAD
 		do {
 			videoTested.clear();
 			Data solution = newSol;
@@ -63,7 +62,7 @@ public class LocalSearch {
 								}
 							}
 						}
-=======
+
 		while (currentSol.getScore() >= newSol.getScore()) {
 			Random r = new Random();
 			int videoAleatoire = 0 + r.nextInt(currentSol.getNbVideo() - 0);
@@ -74,7 +73,6 @@ public class LocalSearch {
 					if (k != cacheServeur && currentSol.getCache(k).getVideo()
 							.contains(currentSol.getCache(k).getVideo(videoAleatoire))) {
 						newSol.getCache(k).removeVideo(videoAleatoire);
->>>>>>> 5dfe00f8e3c3eccf2f1d91f1356b0ffc1a1579de
 					}
 					j++;
 				}
@@ -92,10 +90,8 @@ public class LocalSearch {
 					else
 						newSol = solution;
 				}
-<<<<<<< HEAD
 			}
 		}while (currentSol.getScore() < newSol.getScore());
-=======
 				// Insérer la vidéo i dans le cache server j en respectant les contraintes
 				newSol.getCache(cacheServeur).addVideo(videoAleatoire);
 				int newCharge = newSol.getCache(cacheServeur).getCurrentCharge() + newSol.getSizeVideo(videoAleatoire);
@@ -104,9 +100,6 @@ public class LocalSearch {
 				cacheServeur++;
 			
 		}
->>>>>>> 5dfe00f8e3c3eccf2f1d91f1356b0ffc1a1579de
-
-
 		return newSol;
 	}
 }
