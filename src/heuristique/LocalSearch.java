@@ -31,22 +31,22 @@ public class LocalSearch {
 		while (currentSol.getScore() >= newSol.getScore()) {
 			Random r = new Random();
 			int videoAleatoire = 0 + r.nextInt(currentSol.getNbVideo() - 0);
-
-			for (int j = 0; j < currentSol.getNbCaches(); j++) {
+			int cacheServeur = 0; 
+			
 				// Enlever cette vidéo du cache server auquel elle se trouve
 				for (int k = 0; k < currentSol.getNbCaches(); k++) {
-					if (k != j && currentSol.getCache(k).getVideo()
+					if (k != cacheServeur && currentSol.getCache(k).getVideo()
 							.contains(currentSol.getCache(k).getVideo(videoAleatoire))) {
 						newSol.getCache(k).removeVideo(videoAleatoire);
 					}
 				}
 				// Insérer la vidéo i dans le cache server j en respectant les contraintes
-				newSol.getCache(j).addVideo(videoAleatoire);
-				int newCharge = newSol.getCache(j).getCurrentCharge() + newSol.getSizeVideo(videoAleatoire);
-				newSol.getCache(j).setCurrentCharge(newCharge);
-				newSol.getCacheConnected(videoAleatoire).addCache(j);
-
-			}
+				newSol.getCache(cacheServeur).addVideo(videoAleatoire);
+				int newCharge = newSol.getCache(cacheServeur).getCurrentCharge() + newSol.getSizeVideo(videoAleatoire);
+				newSol.getCache(cacheServeur).setCurrentCharge(newCharge);
+				newSol.getCacheConnected(videoAleatoire).addCache(cacheServeur);
+				cacheServeur++;
+			
 		}
 
 		data = currentSol; // Je sais pas si il faut mettre currentSol ou newSol...
