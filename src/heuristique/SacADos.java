@@ -8,55 +8,81 @@ import model.Request;
 
 public class SacADos {
 	
-	private int[] numeroEndpointLatenceMin;
+	private int[][] numeroEndpointLatenceMin;
 
 	//On cherche la latence la plus petite pour chacune des vidéos
-	public LatenceToCacheServer[] getTabLatenceMin(Data data) {
-		LatenceToCacheServer[] tabLatenceMin = new LatenceToCacheServer[data.getNbCaches()];
-		numeroEndpointLatenceMin = new int[data.getNbCaches()];
+	public LatenceToCacheServer[][] getTabLatenceMin(Data data) {
+		LatenceToCacheServer[][] tabLatenceMin = new LatenceToCacheServer[data.getNbCaches()][data.getNbEndpoint()];
+		numeroEndpointLatenceMin = new int[data.getNbCaches()][data.getNbEndpoint()];
 		for (int i = 0; i < data.getNbCaches(); i++) {
 			LatenceToCacheServer latenceToCacheServer = null;
 			int numeroEndpoint = 0;
+			int numMin = 0;
 			for (int j = 0; j < data.getNbEndpoint(); j++) {
-				for (int k = 0; k < data.getEndpoint(j).getNbCacheConnected(); k++) {
-					if (data.getEndpoint(j).getLatenceToCacheServer(k).getCache() == i &&
-						data.getEndpoint(j).getLatenceToCacheServer(k).getLatency() <= data.getEndpoint(j).getDataCenterLatency()) {
-						if (latenceToCacheServer == null) {
-							latenceToCacheServer = data.getEndpoint(j).getLatenceToCacheServer(k);
-							numeroEndpoint = j;
+				boolean canSwitch = false;
+				if (j == 0) {
+					for (int k = 0; k < data.getEndpoint(j).getNbCacheConnected(); k++) {
+						if (data.getEndpoint(j).getLatenceToCacheServer(k).getCache() == i &&
+								data.getEndpoint(j).getLatenceToCacheServer(k).getLatency() <= data.getEndpoint(j).getDataCenterLatency()) {
+							tabLatenceMin[i][j] = data.getEndpoint(j).getLatenceToCacheServer(k);
+							numeroEndpointLatenceMin[i][j] = j;
 						}
-						else if (data.getEndpoint(j).getLatenceToCacheServer(k).getLatency() < latenceToCacheServer.getLatency()) {
-							latenceToCacheServer = data.getEndpoint(j).getLatenceToCacheServer(k);
-							numeroEndpoint = j;
+					}
+					
+				}
+				else {
+					for (int k = 0; k < data.getEndpoint(j).getNbCacheConnected(); k++) {
+						if (data.getEndpoint(j).getLatenceToCacheServer(k).getCache() == i && 
+								data.getEndpoint(j).getLatenceToCacheServer(k).getLatency() <= data.getEndpoint(j).getDataCenterLatency()) {
+							boolean isInsert = false;
+							int m = 0;
+							while (!isInsert ||	m <= j) {
+								if (tabLatenceMin[i][m] == null) {
+									tabLatenceMin[i][m] = data.getEndpoint(j).getLatenceToCacheServer(k);
+									numeroEndpointLatenceMin[i][m] = j;
+									for (int l = 0; l < m; l++) {
+										if (tabLatenceMin[i][l].getLatency() >= tabLatenceMin[i][m].getLatency()) {
+											numMin = l;
+											canSwitch = true;
+										}
+									}
+									isInsert = true;
+								}
+								m++;
+							}
+							
 						}
 					}
 				}
-			}
-			tabLatenceMin[i] = latenceToCacheServer;
-			numeroEndpointLatenceMin[i] = numeroEndpoint;
+				if (canSwitch) {
+					LatenceToCacheServer latenceMin = tabLatenceMin[i][numMin];
+					tabLatenceMin[i][numMin] = tabLatenceMin[i][j];
+					tabLatenceMin[i][j] = latenceMin;	
+						
+					int endpointMin = numeroEndpointLatenceMin[i][numMin];
+					numeroEndpointLatenceMin[i][numMin] = numeroEndpointLatenceMin[i][j];
+					numeroEndpointLatenceMin[i][j] = endpointMin;	
+				}
+			}	
 		}
 		return tabLatenceMin;
 	}
 	
 	//On trie le tableau contenant les latences minimales par ordre croissant
-	public int[] getTriLatence(Data data, LatenceToCacheServer[] tabLatenceMin){
+	public int[] getTriLatence(Data data, LatenceToCacheServer[][] tabLatenceMin){
 		int[] triLatence = new int[data.getNbCaches()]; 
 		for (int i = 0; i < data.getNbCaches(); i++)
 			triLatence[i] = i;
-		for (int i = 0; i < data.getNbCaches(); i++) {
-			for (int j = data.getNbCaches()-1; j > i; j--) {
-				if (tabLatenceMin[j-1].getLatency() > tabLatenceMin[j].getLatency()) {
-					
-					
-					int numLatence = triLatence[j-1];
-					triLatence[j-1] = triLatence[j];
-					triLatence[j] = numLatence;
-					
-					int numEndpoint = numeroEndpointLatenceMin[j-1];
-					numeroEndpointLatenceMin[j-1] = numeroEndpointLatenceMin[j];
-					numeroEndpointLatenceMin[j] = numEndpoint;
+		for (int i = data.getNbCaches() - 1; i >= 0; i--) {
+			int numLatenceMax = 0;
+			for (int j = 0; j <= i; j++) {
+				if (tabLatenceMin[triLatence[j]][0].getLatency() > tabLatenceMin[triLatence[numLatenceMax]][0].getLatency()) {
+					numLatenceMax = j;
 				}
 			}
+			int latenceMax = triLatence[numLatenceMax];
+			triLatence[numLatenceMax] = triLatence[i];
+			triLatence[i] = latenceMax;
 		}
 		return triLatence;
 	}
@@ -64,14 +90,16 @@ public class SacADos {
 	//On trie les requêtes par ordre décroissant
 	public Request[] getTabRequest(Data data){
 		Request[] request = data.getRequest();
-		for (int i = 0; i < data.getNbRequest(); i++) {
-			for (int j = data.getNbRequest() - 1; j > i; j--) {
-				if (request[j].getRequests() > request[j-1].getRequests()) {
-					Request currentRequest = request[j];
-					request[j-1] = request[j];
-					request[j] = currentRequest;
+		for (int i = data.getNbRequest() - 1; i >= 0; i--) {
+			int numRequest = 0;
+			for (int j = 0; j <= i; j++) {
+				if (request[j].getRequests() < request[numRequest].getRequests()) {
+					numRequest = j;
 				}
 			}
+			Request currentRequest = request[i];
+			request[i] = request[numRequest];
+			request[numRequest] = currentRequest;
 		}
 		return request;
 	}
@@ -82,8 +110,11 @@ public class SacADos {
 			data.getCache(i).getVideo().clear();
 			data.getCache(i).setCurrentCharge(0);
 		}
+		for (int i = 0; i < data.getNbVideo(); i++){
+			data.getCacheConnected(i).getCache().clear();
+		}
 		
-		LatenceToCacheServer[] tabLatenceMin = getTabLatenceMin(data);
+		LatenceToCacheServer[][] tabLatenceMin = getTabLatenceMin(data);
 		
 		int[] triLatence = getTriLatence(data, tabLatenceMin);
 		Request[] triRequest = getTabRequest(data);
@@ -92,26 +123,52 @@ public class SacADos {
 		ArrayList<Integer> endpointTested = new ArrayList<Integer>();
 		
 		for (int i = 0; i < data.getNbCaches(); i++) {
-			int numCache = tabLatenceMin[triLatence[i]].getCache();
-			int endpoint = triRequest[i].getEndpoint();
+			int iter = 0;
 			boolean isInsert = false;
-			for (int j = 0; j < data.getNbRequest(); j++){
-				int video = triRequest[j].getVideo();
-				int currentCharge = data.getCache(numCache).getCurrentCharge();
-				if (data.getSizeVideo(video) + currentCharge < data.getSizeCacheServer()){
-					data.getCache(numCache).addVideo(video);
-					data.getCache(numCache).setCurrentCharge(data.getSizeVideo(video) + currentCharge);
-					data.getCacheConnected(video).addCache(numCache);
-					isInsert = true;
+			while(!isInsert) {
+				int numCache = tabLatenceMin[triLatence[i]][iter].getCache();
+				int endpointLatence = numeroEndpointLatenceMin[triLatence[i]][iter];
+				for (int j = 0; j < triRequest.length; j++){
+					int endpoint = triRequest[j].getEndpoint();
+					int video = triRequest[j].getVideo();
+					boolean isInside = true;
+					if (endpoint == endpointLatence) {
+						if (data.getCacheConnected(video).getCache().size() == 0) {
+							isInside = false;
+						}
+						else {
+							for (int k = 0; k < data.getCache(numCache).getVideo().size(); k++){
+								if (data.getCache(numCache).getVideo(k) == video){
+									isInside = true;
+								} else isInside = false;
+							}
+						}
+						if (!isInside) {
+							int currentCharge = data.getCache(numCache).getCurrentCharge();
+							if (data.getSizeVideo(video) + currentCharge < data.getSizeCacheServer()){
+								data.getCache(numCache).addVideo(video);
+								data.getCache(numCache).setCurrentCharge(data.getSizeVideo(video) + currentCharge);
+								data.getCacheConnected(video).addCache(numCache);
+								isInsert = true;
+							}
+						}
+					}
 				}
+				iter++;
 			}
-			if (!isInsert){
+			/*if (!isInsert){
 				latenceTested.add(tabLatenceMin[triLatence[i]].getCache());
 				endpointTested.add(numeroEndpointLatenceMin[triLatence[i]]);
 				int numeroEndpoint = 0;
 				LatenceToCacheServer currentLatence = null;
 				for (int j = 0; j < data.getNbEndpoint(); j++){
-					if (j != numeroEndpointLatenceMin[triLatence[i]]){
+					boolean isTested = false;
+					for (int k = 0; k < endpointTested.size(); k++) {
+						if (j != endpointTested.get(k)){
+							isTested = true;
+						}
+					}
+					if (!isTested){
 						for (int k = 0; k < data.getEndpoint(i).getNbCacheConnected(); k++){
 							if (data.getEndpoint(j).getLatenceToCacheServer(k).getCache() == numCache &&
 								data.getEndpoint(j).getLatenceToCacheServer(k).getLatency() <= data.getEndpoint(j).getDataCenterLatency()){
@@ -135,7 +192,8 @@ public class SacADos {
 			else {
 				latenceTested.clear();
 				endpointTested.clear();
-			}
+			}*/
+			
 		}
 		
 		return data;

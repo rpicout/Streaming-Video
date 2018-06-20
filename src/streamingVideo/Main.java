@@ -10,9 +10,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		String name = "InputData/me_at_the_zoo.txt";
+		//String name = "InputData/me_at_the_zoo.txt";
 		//String name = "InputData/kittens.txt";
-		//String name = "InputData/trending_today.txt";
+		String name = "InputData/trending_today.txt";
 		//String name = "InputData/video_worth_spreading.txt";
 		
 		ReadData f = new ReadData();
@@ -24,12 +24,12 @@ public class Main {
 		WriteResult wr = new WriteResult();
 		WriteScore ws = new WriteScore();
 		wr.writeGloutonne(data);
-		ws.writeGloutonne(data);
+		ws.writeGloutonne(data, name);
 		
 		SacADos sacADos = new SacADos();
 		data = sacADos.getSolution(data);
 		wr.writeSacADos(data);
-		ws.writeSacADos(data);
+		ws.writeSacADos(data, name);
 		
 		
 		
