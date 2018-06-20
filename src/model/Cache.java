@@ -66,7 +66,10 @@ public class Cache {
 		this.video.add(video);
 	}
 	public void removeVideo(int video) {
-		this.video.remove(video);
+		for (int i = 0; i < this.video.size(); i++) {
+			if (this.video.get(i) == video)
+				this.video.remove(i);
+		}
 	}
 	
 }

@@ -11,13 +11,18 @@ public class WriteResult {
 	
 	File file;
 	
-	public void writeGloutonne (Data data) {
-		file = new File("OutputData/gloutonneSolution.result.txt");
+	public void writeGloutonne (Data data, String name) {
+		file = new File("OutputData/gloutonneSolution.result."+ name.substring(10));
 		write(data);
 	}
 	
-	public void writeSacADos (Data data){
-		file = new File("OutputData/sacADosSolution.result.txt");
+	public void writeSacADos (Data data, String name){
+		file = new File("OutputData/sacADosSolution.result."+ name.substring(10));
+		write(data);
+	}
+	
+	public void writeLocalSearch (Data data, String name){
+		file = new File("OutputData/localSearchSolution.result."+ name.substring(10));
 		write(data);
 	}
 	

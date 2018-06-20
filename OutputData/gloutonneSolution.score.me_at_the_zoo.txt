@@ -1,0 +1,2 @@
+Vidéo testée : InputData/me_at_the_zoo.txt
+Score : 214000

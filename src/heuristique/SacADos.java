@@ -155,45 +155,7 @@ public class SacADos {
 					}
 				}
 				iter++;
-			}
-			/*if (!isInsert){
-				latenceTested.add(tabLatenceMin[triLatence[i]].getCache());
-				endpointTested.add(numeroEndpointLatenceMin[triLatence[i]]);
-				int numeroEndpoint = 0;
-				LatenceToCacheServer currentLatence = null;
-				for (int j = 0; j < data.getNbEndpoint(); j++){
-					boolean isTested = false;
-					for (int k = 0; k < endpointTested.size(); k++) {
-						if (j != endpointTested.get(k)){
-							isTested = true;
-						}
-					}
-					if (!isTested){
-						for (int k = 0; k < data.getEndpoint(i).getNbCacheConnected(); k++){
-							if (data.getEndpoint(j).getLatenceToCacheServer(k).getCache() == numCache &&
-								data.getEndpoint(j).getLatenceToCacheServer(k).getLatency() <= data.getEndpoint(j).getDataCenterLatency()){
-								if (currentLatence == null) {
-									currentLatence = data.getEndpoint(j).getLatenceToCacheServer(k);
-									numeroEndpoint = j;
-								}
-								else if (data.getEndpoint(j).getLatenceToCacheServer(k).getLatency() < currentLatence.getLatency()) {
-									currentLatence = data.getEndpoint(j).getLatenceToCacheServer(k);
-									numeroEndpoint = j;
-								}
-							}
-						}
-					}
-				}	
-				tabLatenceMin[i] = currentLatence;
-				numeroEndpointLatenceMin[i] = numeroEndpoint;
-				triLatence = getTriLatence(data, tabLatenceMin);
-				i--;
-			}
-			else {
-				latenceTested.clear();
-				endpointTested.clear();
-			}*/
-			
+			}			
 		}
 		
 		return data;

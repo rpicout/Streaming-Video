@@ -1,0 +1,2 @@
+Vidéo testée : InputData/trending_today.txt
+Score : 532000

@@ -33,4 +33,11 @@ public class CacheConnected {
 		this.cache.add(cache);
 	}
 	
+	public void removeCache(int cache) {
+		for (int i = 0; i < this.cache.size(); i++) {
+			if (this.cache.get(i) == cache)
+				this.cache.remove(i);
+		}
+	}
+	
 }

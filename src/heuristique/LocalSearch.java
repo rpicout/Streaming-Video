@@ -1,5 +1,6 @@
 package heuristique;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import model.Data;
@@ -25,32 +26,63 @@ public class LocalSearch {
 		// solution aléatoire
 		Data currentSol = null;
 		Gloutonne gloutonne = new Gloutonne();
-		currentSol = gloutonne.getSolution(currentSol);
+		currentSol = gloutonne.getSolution(data);
 		Data newSol = currentSol;
+		
+		ArrayList<Integer> videoTested = new ArrayList<Integer>();
 
-		while (currentSol.getScore() >= newSol.getScore()) {
-			Random r = new Random();
-			int videoAleatoire = 0 + r.nextInt(currentSol.getNbVideo() - 0);
-
-			for (int j = 0; j < currentSol.getNbCaches(); j++) {
-				// Enlever cette vidéo du cache server auquel elle se trouve
-				for (int k = 0; k < currentSol.getNbCaches(); k++) {
-					if (k != j && currentSol.getCache(k).getVideo()
-							.contains(currentSol.getCache(k).getVideo(videoAleatoire))) {
-						newSol.getCache(k).removeVideo(videoAleatoire);
+		do {
+			videoTested.clear();
+			Data solution = newSol;
+			while (videoTested.size() < currentSol.getNbVideo()) {
+				Random r = new Random();
+				int videoAleatoire = 0 + r.nextInt(currentSol.getNbVideo() - 0);
+	
+				boolean isBetter = false;
+				int j = 0;
+				while (!isBetter && j < newSol.getNbCaches()) {
+	
+					// Enlever cette vidéo du cache server auquel elle se trouve
+					for (int k = 0; k < newSol.getNbCaches(); k++) {
+						int newCharge = newSol.getCache(j).getCurrentCharge() + newSol.getSizeVideo(videoAleatoire);
+						// On vérifie qu'on puisse mettre la vidéo dans le cache server
+						if (newCharge <= newSol.getSizeCacheServer()) {
+							if (k != j && newSol.getCache(k).getVideo().contains(videoAleatoire)) {
+								newSol.getCache(k).removeVideo(videoAleatoire);
+								newSol.getCacheConnected(videoAleatoire).removeCache(k);
+								newSol.getCache(k).setCurrentCharge(newSol.getCache(k).getCurrentCharge() - newSol.getSizeVideo(videoAleatoire));
+								
+								// Insérer la vidéo i dans le cache server j en respectant les contraintes
+								newSol.getCache(j).addVideo(videoAleatoire);
+								newSol.getCache(j).setCurrentCharge(newCharge);
+								newSol.getCacheConnected(videoAleatoire).addCache(j);
+								if (newSol.getScore() >= currentSol.getScore()) {
+									isBetter = true;
+									//currentSol = newSol;
+								}
+							}
+						}
 					}
+					j++;
 				}
-				// Insérer la vidéo i dans le cache server j en respectant les contraintes
-				newSol.getCache(j).addVideo(videoAleatoire);
-				int newCharge = newSol.getCache(j).getCurrentCharge() + newSol.getSizeVideo(videoAleatoire);
-				newSol.getCache(j).setCurrentCharge(newCharge);
-				newSol.getCacheConnected(videoAleatoire).addCache(j);
-
+				boolean isTested = false;
+				for (int i = 0; i < videoTested.size(); i++)
+					if (videoTested.get(i) == videoAleatoire)
+						isTested = true;
+				if (!isTested)
+					videoTested.add(videoAleatoire);
+				if (videoTested.size() == currentSol.getNbVideo()) {
+					if (solution.getScore() > newSol.getScore()) {
+						videoTested.clear();
+						solution = newSol;
+					}
+					else
+						newSol = solution;
+				}
 			}
-		}
+		}while (currentSol.getScore() < newSol.getScore());
 
-		data = currentSol; // Je sais pas si il faut mettre currentSol ou newSol...
 
-		return data;
+		return newSol;
 	}
 }

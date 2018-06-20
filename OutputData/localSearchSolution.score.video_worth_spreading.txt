@@ -1,0 +1,2 @@
+Vidéo testée : InputData/video_worth_spreading.txt
+Score : 4234000
